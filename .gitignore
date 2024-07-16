@@ -1,0 +1,5 @@
+/External
+/.vs
+**.tlog
+Debug
+x64

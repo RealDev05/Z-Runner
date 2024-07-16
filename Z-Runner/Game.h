@@ -1,0 +1,78 @@
+#pragma once
+
+#define SCREEN_WIDTH 1920.f
+#define SCREEN_HEIGHT 1080.f
+
+#define GRAVITY 50
+
+#define VIEW_WIDTH 960.f
+#define VIEW_HEIGHT 540.f
+
+#include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
+#include <SFML/Window.hpp>
+#include <SFML/System.hpp>
+#include <SFML/Network.hpp>
+
+#include <vector>
+
+#include "Enemy.h"
+#include "Obstacle.h"
+#include "Platform.h"
+#include "Player.h"
+#include "Projectile.h"
+
+#include "SceneGenerator.h"
+
+#include "PathFinder.h"
+
+using namespace sf;
+using namespace std;
+
+//typedef struct GameObjects {
+//	vector<Enemy> Enemies;
+//	vector<Obstacle> Obstacles;
+//	vector<Platform> Platforms;
+//	vector<Projectile*> Projectiles;
+//} GameObjects;
+
+class Game
+{
+
+private :
+	RenderWindow* window;
+	VideoMode videoMode;
+	Event event;
+	int pressedKey = -1;
+	Clock clock;
+	Time deltaTime;
+
+	Player player;
+	Platform ground;
+	GameObjects gameObjects;
+
+	SceneGenerator sceneGenerator;
+
+	bool isInSceneTransition=false;
+
+	View mainCamera;
+
+	void initializeVariables();
+	void initializeWindow();
+
+	vector<vector<PathFindingNode>> grid;
+	PathFinder pathFinder;
+public :
+	GameObjects nextSceneObjects;
+	Game();
+	virtual ~Game();
+
+	void eventHandler();
+	void update();
+	void render();
+
+	bool isRunning();
+
+	friend class SceneGenerator;
+};
+
