@@ -1,6 +1,5 @@
 #pragma once
 
-#define ATTACK_RATE 2
 #define ATTACK_POWER 5
 
 #include<iostream>

@@ -99,6 +99,7 @@ Enemy::Enemy(float width, float height, float x, float y, unordered_map<string, 
 
 	attackingTimer = nullptr;
 	updateThread = nullptr;
+	attackRate = 2;
 }
 
 int Enemy::attackPlayer()
@@ -106,7 +107,7 @@ int Enemy::attackPlayer()
 	if (!canAttack) return 0;
 	delete attackingTimer;
 	canAttack = false;
-	attackingTimer = new Thread(bind(&Enemy::refreshAttack, this, 1000 / ATTACK_RATE));
+	attackingTimer = new Thread(&Enemy::refreshAttack, this);
 	attackingTimer->launch();
 	return ATTACK_POWER;
 }
