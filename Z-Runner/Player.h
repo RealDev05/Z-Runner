@@ -21,7 +21,7 @@ using namespace std;
 class Player
 {
 private:
-	RectangleShape player,groundChecker;
+	RectangleShape player;
 	Vector2f velocity;
 	vector<RectangleShape> gunShots;
 	void refreshShooting(int waitTime);

@@ -24,15 +24,7 @@ bool Player::isOnGround(RectangleShape shape) {
 	groundChecker.setSize(Vector2f(player.getSize().x * 0.9, 10));
 	groundChecker.setPosition(player.getPosition().x + player.getSize().x * 0.05, player.getPosition().y + player.getSize().y - 10);
 
-	/*float rect1[4] = { groundChecker.getPosition().x,groundChecker.getPosition().y,groundChecker.getSize().x,10 };
-	rect1[2] += rect1[0];
-	rect1[3] += rect1[1];
-
-	float rect2[4] = { shape.getPosition().x,shape.getPosition().y,shape.getSize().x,shape.getSize().y };
-	rect2[2] += rect2[0];
-	rect2[3] += rect2[1];*/
-
-	return groundChecker.getGlobalBounds().intersects(shape.getGlobalBounds());// || (rect1[0] > rect2[0] && rect1[0]<rect2[2] && rect1[1]>rect2[1] && rect1[1] < rect2[3]);
+	return groundChecker.getGlobalBounds().intersects(shape.getGlobalBounds());
 }
 
 

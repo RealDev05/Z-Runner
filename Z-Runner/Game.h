@@ -15,9 +15,9 @@
 #include <SFML/Network.hpp>
 
 #include <vector>
+#include <unordered_map>
 
 #include "Enemy.h"
-#include "Obstacle.h"
 #include "Platform.h"
 #include "Player.h"
 #include "Projectile.h"
@@ -31,7 +31,7 @@ using namespace std;
 
 //typedef struct GameObjects {
 //	vector<Enemy> Enemies;
-//	vector<Obstacle> Obstacles;
+//	vector<Obstacle> Obstacles; 
 //	vector<Platform> Platforms;
 //	vector<Projectile*> Projectiles;
 //} GameObjects;
@@ -50,6 +50,7 @@ private :
 	Player player;
 	Platform ground;
 	GameObjects gameObjects;
+	unordered_map<string,unordered_map<string,vector<Texture*>>> Textures;
 
 	SceneGenerator sceneGenerator;
 

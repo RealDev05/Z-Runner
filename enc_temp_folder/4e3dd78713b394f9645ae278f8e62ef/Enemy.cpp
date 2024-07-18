@@ -1,5 +1,11 @@
 #include "Enemy.h"
 
+void Enemy::refreshAttack(int waitTime)
+{
+	sf::sleep(milliseconds(waitTime));
+	canAttack = true;
+}
+
 void Enemy::trueUpdate(float deltaTime, vector<Platform> platforms, vector<Projectile*> projectiles,FloatRect playerBounds,FloatRect ground,PathFinder pathFinder)
 {
 	readyToUpdate = false;
@@ -15,10 +21,10 @@ void Enemy::trueUpdate(float deltaTime, vector<Platform> platforms, vector<Proje
 	}*/
 
 	if (canSeePlayer && !isFalling) {
-		setVelocity(Vector2f(70 * (playerBounds.getPosition().x - self.getPosition().x > 0 ? 1.f : -1.f), velocity.y));
+		setVelocity(Vector2f(70 * (playerBounds.getPosition().x - enemy.getPosition().x > 0 ? 1.f : -1.f), velocity.y));
 	}
 
-	isFalling = !self.getGlobalBounds().intersects(ground);
+	isFalling = !enemy.getGlobalBounds().intersects(ground);
 	for (Platform platform : platforms) {
 		int collidingSide = isCollidingWith(platform.getObject(),true);
 
@@ -42,13 +48,13 @@ void Enemy::trueUpdate(float deltaTime, vector<Platform> platforms, vector<Proje
 	for (Projectile* projectile : projectiles) {
 		if (projectile->isHostile) continue;
 
-		if(self.getGlobalBounds().intersects(projectile->getObject().getGlobalBounds()) && !projectile->destroyed) {
+		if(enemy.getGlobalBounds().intersects(projectile->getObject().getGlobalBounds()) && !projectile->destroyed) {
 			receiveDamage(projectile->getDamage());
 			projectile->destruct();
 		}
 	}
 
-	if (self.getGlobalBounds().intersects(playerBounds)) {
+	if (enemy.getGlobalBounds().intersects(playerBounds)) {
 		velocity.x = 0;
 	}
 
@@ -86,19 +92,93 @@ void Enemy::trueUpdate(float deltaTime, vector<Platform> platforms, vector<Proje
 
 }
 
+Vector2f Enemy::toVector2f(Vector2u vector)
+{
+	return Vector2f(vector.x, vector.y);
+}
 
 Enemy::Enemy(float width, float height, float x, float y, unordered_map<string, vector<Texture*>> &texture)
 {
-	self.setPosition(x, y);
+	enemy.setPosition(x, y);
 
 	this->textures = texture;
-	self.setTexture(*texture["idle"][0]);
+	enemy.setTexture(*texture["idle"][0]);
 	
-	this->size = toVector2f(self.getTexture()->getSize());
+	this->size = toVector2f(enemy.getTexture()->getSize());
 	updateSize(Vector2f(width, height));
 
 	attackingTimer = nullptr;
 	updateThread = nullptr;
+}
+
+
+int Enemy::isCollidingWith(RectangleShape shape,bool selfCheck,FloatRect itemToCheck)
+{
+	FloatRect playerBounds = enemy.getGlobalBounds();
+	FloatRect objectBounds = shape.getGlobalBounds();
+
+	if (!selfCheck) {
+		playerBounds = itemToCheck;
+	}
+
+	if (!playerBounds.intersects(objectBounds)) return -1;
+
+	float playerRight = playerBounds.left + playerBounds.width;
+	float playerBottom = playerBounds.top + playerBounds.height;
+	float objectRight = objectBounds.left + objectBounds.width;
+	float objectBottom = objectBounds.top + objectBounds.height;
+
+	float overlapLeft = playerRight - objectBounds.left;
+	float overlapRight = objectRight - playerBounds.left;
+	float overlapTop = playerBottom - objectBounds.top;
+	float overlapBottom = objectBottom - playerBounds.top;
+
+	bool fromLeft = overlapLeft < overlapRight && overlapLeft < overlapTop && overlapLeft < overlapBottom;
+	bool fromRight = overlapRight < overlapLeft && overlapRight < overlapTop && overlapRight < overlapBottom;
+	bool fromTop = overlapTop < overlapBottom && overlapTop < overlapLeft && overlapTop < overlapRight;
+	bool fromBottom = overlapBottom < overlapTop && overlapBottom < overlapLeft && overlapBottom < overlapRight;
+
+	if (fromLeft) {
+		return 3;
+	}
+	else if (fromRight) {
+		return 1;
+	}
+	else if (fromTop) {
+		return 0;
+	}
+	else if (fromBottom) {
+		return 2;
+	}
+}
+
+void Enemy::updatePosition(Vector2f position)
+{
+	
+	enemy.setPosition(position);
+}
+
+void Enemy::updateSize(Vector2f size)
+{
+	enemy.setScale(vectorDivide(size,this->size));
+}
+
+void Enemy::setVelocity(Vector2f velocity)
+{
+	if (!isFalling && velocity.y > 0) {
+		velocity.y = 0;
+		this->velocity.y = 0;
+	}
+	this->velocity = velocity;
+}
+
+void Enemy::addVelocity(Vector2f velocity)
+{
+	if (!isFalling && velocity.y > 0) {
+		velocity.y = 0;
+		this->velocity.y = 0;
+	}
+	this->velocity += velocity;
 }
 
 int Enemy::attackPlayer()
@@ -111,6 +191,12 @@ int Enemy::attackPlayer()
 	return ATTACK_POWER;
 }
 
+void Enemy::receiveDamage(float damage)
+{
+	health -= damage;
+	died = health <= 0;
+}
+
 void Enemy::update(float deltaTime, vector<Platform> platforms, vector<Projectile*> projectiles, FloatRect playerBounds,FloatRect ground,PathFinder pathFinder)
 {
 	if (died || !readyToUpdate) return;
@@ -119,4 +205,23 @@ void Enemy::update(float deltaTime, vector<Platform> platforms, vector<Projectil
 	delete updateThread;
 	updateThread = new Thread(bind(&Enemy::trueUpdate, this, deltaTime, platforms, projectiles, playerBounds,ground, pathFinder));
 	updateThread->launch();
+}
+Vector2f Enemy::getSize()
+{
+	return toVector2f(enemy.getTexture()->getSize());
+}
+
+Vector2f Enemy::getPosition()
+{
+	return enemy.getPosition();
+}
+
+Vector2f Enemy::getVelocity()
+{
+	return velocity;
+}
+
+Sprite Enemy::getObject()
+{
+	return enemy;
 }

@@ -143,9 +143,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="character.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Obstacle.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="PathFinder.cpp" />
     <ClCompile Include="PathFindingNode.cpp" />
     <ClCompile Include="Platform.cpp" />
@@ -155,9 +156,10 @@
     <ClCompile Include="Z-Runner.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="character.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="Obstacle.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="PathFinder.h" />
     <ClInclude Include="PathFindingNode.h" />
     <ClInclude Include="Platform.h" />

@@ -9,7 +9,7 @@ void SceneGenerator::generateScene()
 
 	if (sceneType == Plain||true) {
 		for (int i = 0; i < (10 + rand() % 5); i++) {
-			gameObjects.Enemies.push_back(new Enemy(20, 20,  fmod(rand(), (screenWidth * 0.8)) + screenWidth * 0.1, baseLine-20, Color::Green));
+			gameObjects.Enemies.push_back(new Enemy(20, 20,  fmod(rand(), (screenWidth * 0.8)) + screenWidth * 0.1, baseLine-20, Textures["zombie"]));
 		}
 	}
 	else if (sceneType == Normal) {
@@ -27,7 +27,13 @@ SceneGenerator::SceneGenerator(GameObjects& gameObjects,int baseLine, float scre
 	this -> screenWidth = screenWidth;
 	this -> screenHeight = screenHeight;
 
+
 	generatorThread = nullptr;
+}
+
+void SceneGenerator::setTextures(unordered_map<string, unordered_map<string, vector<Texture*>>>& textures)
+{
+	this->Textures = textures;
 }
 
 void SceneGenerator::generateNextScene()

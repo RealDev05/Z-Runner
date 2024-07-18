@@ -7,7 +7,6 @@
 #include <SFML/System/Thread.hpp>
 
 #include "Enemy.h"
-#include "Obstacle.h"
 #include "Platform.h"
 #include "Player.h"
 #include "Projectile.h"
@@ -25,7 +24,6 @@ enum SceneTypes {
 
 typedef struct GameObjects {
 	vector<Enemy*> Enemies;
-	vector<Obstacle> Obstacles;
 	vector<Platform> Platforms;
 	vector<Projectile*> Projectiles;
 	int id=0;
@@ -36,6 +34,7 @@ class SceneGenerator
 private :
 
 	Thread* generatorThread;
+	unordered_map<string, unordered_map<string, vector<Texture*>>> Textures;
 
 	int baseLine;
 	float screenWidth;
@@ -45,7 +44,8 @@ private :
 public :
 	GameObjects& gameObjects;
 	bool isGeneratingScene;
-	SceneGenerator(GameObjects& gameObjects,int baseLine,float screenWidth,float screenHeight);
+	SceneGenerator(GameObjects& gameObjects, int baseLine, float screenWidth, float screenHeight);
+	void setTextures(unordered_map<string, unordered_map<string, vector<Texture*>>>& textures);
 	void generateNextScene();
 };
 

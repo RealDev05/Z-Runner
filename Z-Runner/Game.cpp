@@ -5,6 +5,13 @@ void Game::initializeVariables()
 {
 	this->window = nullptr;
 
+    unordered_map<string, vector<Texture*>>* textureGroup = new unordered_map<string, vector<Texture*>>();
+    vector<Texture*>* textures=new vector<Texture*>();
+    Texture* texture = new Texture();
+    texture->loadFromFile("res/textures/sprites/zombie_idle/1.png");
+    textures->push_back(texture);
+    (*textureGroup)["idle"] = *textures;
+    Textures["zombie"] = *textureGroup;
 
 }
 
@@ -36,7 +43,7 @@ Game::Game() : mainCamera(FloatRect(0.f, SCREEN_HEIGHT-VIEW_HEIGHT, VIEW_WIDTH, 
     window->setView(mainCamera);
 
     gameObjects.Platforms.push_back(safeZoneBarrier);
-    gameObjects.Enemies.push_back(new Enemy(20, 20, VIEW_WIDTH - 300, ground.getPosition().y - 100, Color::Green));
+    gameObjects.Enemies.push_back(new Enemy(50, 50, VIEW_WIDTH - 300, ground.getPosition().y - 150, Textures["zombie"]));
 
     
     /*for (int x = 0; x < SCREEN_WIDTH; x++) {
@@ -71,6 +78,8 @@ Game::Game() : mainCamera(FloatRect(0.f, SCREEN_HEIGHT-VIEW_HEIGHT, VIEW_WIDTH, 
 
     pathFinder.setGrid(grid);*/
 
+
+    sceneGenerator.setTextures(Textures);
     sceneGenerator.generateNextScene();
 }
 
@@ -187,9 +196,6 @@ void Game::update()
         gameObjects.Projectiles.insert(gameObjects.Projectiles.begin(), player.shootAt(mousePos));
     }
 
-    for (Obstacle obstacle : gameObjects.Obstacles) {
-        objects.push_back(obstacle.getObject());
-    }
     objects.push_back(ground.getObject());
 
     //Updating projectiles
