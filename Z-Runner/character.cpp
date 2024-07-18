@@ -11,6 +11,19 @@ Vector2f Character::toVector2f(Vector2u vector)
 	return Vector2f(vector.x, vector.y);
 }
 
+Texture* Character::getNextTexture(string textureName)
+{
+	try {
+		textureIndex[textureName] = (textureIndex[textureName] + 1) % textures[textureName].size();
+	}
+	catch (exception e) {
+		cout << e.what() << endl;
+		textureIndex[textureName] = 0;
+	}
+
+	return textures[textureName][textureIndex[textureName]];
+}
+
 int Character::isCollidingWith(RectangleShape shape, bool selfCheck, FloatRect itemToCheck)
 {
 	FloatRect playerBounds = self.getGlobalBounds();
@@ -67,7 +80,7 @@ void Character::updatePosition(Vector2f position)
 
 void Character::updateSize(Vector2f size)
 {
-	self.setScale(vectorDivide(size, this->size));
+	self.setScale(vectorDivide(size, toVector2f(self.getTexture()->getSize())));
 }
 
 void Character::receiveDamage(float damage)

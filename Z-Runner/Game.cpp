@@ -1,26 +1,27 @@
 #include "Game.h"
 #include <iostream>
+#include <filesystem>
 
 void Game::initializeVariables()
 {
 	this->window = nullptr;
 
-    unordered_map<string, vector<Texture*>>* textureGroup = new unordered_map<string, vector<Texture*>>();
-    vector<Texture*>* textures=new vector<Texture*>();
-    Texture* texture = new Texture();
-    texture->loadFromFile("res/textures/sprites/zombie_idle/1.png");
-    textures->push_back(texture);
-    (*textureGroup)["idle"] = *textures;
-    Textures["zombie"] = *textureGroup;
+    //Loading texture
+    path ResFolder = current_path() / "res\\textures\\sprites";
 
-    unordered_map<string, vector<Texture*>>* textureGroup = new unordered_map<string, vector<Texture*>>();
-    vector<Texture*>* textures = new vector<Texture*>();
-    Texture* texture = new Texture();
-    texture->loadFromFile("res/textures/sprites/zombie_idle/1.png");
-    textures->push_back(texture);
-    (*textureGroup)["idle"] = *textures;
-    Textures["player"] = *textureGroup;
-
+    for (const auto& character : directory_iterator(ResFolder)) {
+        unordered_map<string, vector<Texture*>>* textureGroup = new unordered_map<string, vector<Texture*>>();
+        for (const auto& animation : directory_iterator(character.path())) {
+            vector<Texture*>* textures = new vector<Texture*>();
+            for (const auto& file : directory_iterator(animation.path())) {
+                Texture* texture = new Texture();
+                texture->loadFromFile("res\\textures\\sprites\\"+relative(file,ResFolder).string());
+                textures->push_back(texture);
+            }
+            (*textureGroup)[animation.path().filename().string()] = *textures;
+        }
+        Textures[character.path().filename().string()] = *textureGroup;
+    }
 }
 
 void Game::initializeWindow()
@@ -42,7 +43,7 @@ Game::Game() : mainCamera(FloatRect(0.f, SCREEN_HEIGHT-VIEW_HEIGHT, VIEW_WIDTH, 
 	this->initializeVariables();
 	this->initializeWindow();
 
-    ground.initialize(SCREEN_WIDTH, SCREEN_HEIGHT * 0.1f,0,SCREEN_HEIGHT*0.9f, Color(99, 86, 49),true);
+    ground.initialize(SCREEN_WIDTH, SCREEN_HEIGHT * 0.1f,0,SCREEN_HEIGHT*0.9f, Color(99, 86, 49,0),true);
     player.initialize(SCREEN_WIDTH/56, SCREEN_WIDTH / 56, SCREEN_WIDTH / 37, ground.getPosition().y - SCREEN_WIDTH / 56, Textures["player"]);
 
     Platform safeZoneBarrier;
@@ -51,7 +52,7 @@ Game::Game() : mainCamera(FloatRect(0.f, SCREEN_HEIGHT-VIEW_HEIGHT, VIEW_WIDTH, 
     window->setView(mainCamera);
 
     gameObjects.Platforms.push_back(safeZoneBarrier);
-    gameObjects.Enemies.push_back(new Enemy(50, 50, VIEW_WIDTH - 300, ground.getPosition().y - 150, Textures["zombie"]));
+    gameObjects.Enemies.push_back(new Enemy( 50, VIEW_WIDTH - 300, ground.getPosition().y - 150, Textures["zombie"]));
 
     
     /*for (int x = 0; x < SCREEN_WIDTH; x++) {

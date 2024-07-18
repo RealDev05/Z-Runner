@@ -9,7 +9,7 @@ void SceneGenerator::generateScene()
 
 	if (sceneType == Plain||true) {
 		for (int i = 0; i < (10 + rand() % 5); i++) {
-			gameObjects.Enemies.push_back(new Enemy(20, 20,  fmod(rand(), (screenWidth * 0.8)) + screenWidth * 0.1, baseLine-20, Textures["zombie"]));
+			gameObjects.Enemies.push_back(new Enemy(50,  fmod(rand(), (screenWidth * 0.8)) + screenWidth * 0.1, baseLine-20, Textures["zombie"]));
 		}
 	}
 	else if (sceneType == Normal) {

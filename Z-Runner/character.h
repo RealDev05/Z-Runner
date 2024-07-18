@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <SFML/Graphics/RectangleShape.hpp>
 #include<SFML/System/Thread.hpp>
 #include<SFML/System/Sleep.hpp>
@@ -33,6 +32,10 @@ protected:
 	}
 
 	Vector2f toVector2f(Vector2u vector);
+
+	unordered_map<string, int> textureIndex;
+
+	Texture* getNextTexture(string textureName);
 
 public :
 	bool isFalling = true;

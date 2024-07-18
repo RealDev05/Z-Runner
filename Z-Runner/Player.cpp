@@ -12,8 +12,8 @@ void Player::initialize(float width, float height, float x, float y, unordered_m
 	this->textures = texture;
 	self.setTexture(*texture["idle"][0]);
 
-	this->size = toVector2f(self.getTexture()->getSize());
-	updateSize(Vector2f(width, height));
+	size = Vector2f(width, height);
+	updateSize(size);
 
 	attackingTimer = nullptr;
 	attackRate = 2;
@@ -24,7 +24,7 @@ Projectile* Player::shootAt(Vector2f target)
 {
 	delete attackingTimer;
 	canAttack = false;
-	attackingTimer =new Thread(& Player::refreshAttack, this);
+	attackingTimer =new Thread(bind( & Player::refreshAttack, this));
 	attackingTimer->launch();
 
 	target -= self.getPosition();

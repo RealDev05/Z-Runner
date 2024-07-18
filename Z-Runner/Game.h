@@ -16,6 +16,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <filesystem>
 
 #include "Enemy.h"
 #include "Platform.h"
@@ -25,9 +26,11 @@
 #include "SceneGenerator.h"
 
 #include "PathFinder.h"
+#include <filesystem>
 
 using namespace sf;
 using namespace std;
+using namespace filesystem;
 
 //typedef struct GameObjects {
 //	vector<Enemy> Enemies;
@@ -57,6 +60,8 @@ private :
 	bool isInSceneTransition=false;
 
 	View mainCamera;
+
+	void loadTexture();
 
 	void initializeVariables();
 	void initializeWindow();

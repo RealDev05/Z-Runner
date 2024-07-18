@@ -82,20 +82,28 @@ void Enemy::trueUpdate(float deltaTime, vector<Platform> platforms, vector<Proje
 
 	updatePosition(getPosition() + velocity * deltaTime);
 
+
+	if (velocity.x != 0) {
+		self.setTexture(*getNextTexture("move"),true);
+		cout << self.getScale().x << endl;
+		updateSize(size);
+		//self.setScale(0.1, 0.1);
+	}
+
 	readyToUpdate = true;
 
 }
 
 
-Enemy::Enemy(float width, float height, float x, float y, unordered_map<string, vector<Texture*>> &texture)
+Enemy::Enemy(float width, float x, float y, unordered_map<string, vector<Texture*>> &texture)
 {
 	self.setPosition(x, y);
 
 	this->textures = texture;
 	self.setTexture(*texture["idle"][0]);
 	
-	this->size = toVector2f(self.getTexture()->getSize());
-	updateSize(Vector2f(width, height));
+	size = Vector2f(width, width);
+	updateSize(size);
 
 	attackingTimer = nullptr;
 	updateThread = nullptr;
@@ -107,7 +115,7 @@ int Enemy::attackPlayer()
 	if (!canAttack) return 0;
 	delete attackingTimer;
 	canAttack = false;
-	attackingTimer = new Thread(&Enemy::refreshAttack, this);
+	attackingTimer = new Thread(bind( & Enemy::refreshAttack, this));
 	attackingTimer->launch();
 	return ATTACK_POWER;
 }

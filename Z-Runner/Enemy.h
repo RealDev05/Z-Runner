@@ -21,10 +21,11 @@ private:
 	Thread* updateThread;
 
 	bool readyToUpdate = true;
+
 public:
 	bool canSeePlayer = false;
 
-	Enemy(float width, float height, float x, float y, unordered_map<string, vector<Texture*>> &texture);
+	Enemy(float width, float x, float y, unordered_map<string, vector<Texture*>> &texture);
 
 	int attackPlayer();
 
