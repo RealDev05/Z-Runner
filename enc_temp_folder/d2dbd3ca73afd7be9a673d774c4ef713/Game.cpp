@@ -13,14 +13,6 @@ void Game::initializeVariables()
     (*textureGroup)["idle"] = *textures;
     Textures["zombie"] = *textureGroup;
 
-    unordered_map<string, vector<Texture*>>* textureGroup = new unordered_map<string, vector<Texture*>>();
-    vector<Texture*>* textures = new vector<Texture*>();
-    Texture* texture = new Texture();
-    texture->loadFromFile("res/textures/sprites/zombie_idle/1.png");
-    textures->push_back(texture);
-    (*textureGroup)["idle"] = *textures;
-    Textures["player"] = *textureGroup;
-
 }
 
 void Game::initializeWindow()
@@ -43,7 +35,7 @@ Game::Game() : mainCamera(FloatRect(0.f, SCREEN_HEIGHT-VIEW_HEIGHT, VIEW_WIDTH, 
 	this->initializeWindow();
 
     ground.initialize(SCREEN_WIDTH, SCREEN_HEIGHT * 0.1f,0,SCREEN_HEIGHT*0.9f, Color(99, 86, 49),true);
-    player.initialize(SCREEN_WIDTH/56, SCREEN_WIDTH / 56, SCREEN_WIDTH / 37, ground.getPosition().y - SCREEN_WIDTH / 56, Textures["player"]);
+    player.initialize(SCREEN_WIDTH/56, SCREEN_WIDTH / 56, SCREEN_WIDTH / 37, ground.getPosition().y - SCREEN_WIDTH / 56, Color(32, 57, 117));
 
     Platform safeZoneBarrier;
     safeZoneBarrier.initialize(200, 100, VIEW_WIDTH - 200, ground.getPosition().y - 100, Color::Red, false);
@@ -155,9 +147,9 @@ void Game::update()
    }
 
     //Player on ground check
-    player.isFalling = player.isCollidingWith(ground.getObject(),true)!=0;
+    player.isFalling = player.isCollidingWith(ground.getObject())!=0;
     for (Platform platform : gameObjects.Platforms) {
-        int collidingSide = player.isCollidingWith(platform.getObject(),true);
+        int collidingSide = player.isCollidingWith(platform.getObject());
         objects.push_back(platform.getObject());
 
         player.isFalling = player.isFalling && collidingSide!=0;
@@ -193,7 +185,7 @@ void Game::update()
     }
 
     //Player shooting
-    if (player.canAttack && !player.died) {
+    if (player.canShoot && !player.isDead) {
         if (gameObjects.Projectiles.size() > 10) {
             Projectile* t;
             t = gameObjects.Projectiles.back();
@@ -231,9 +223,9 @@ void Game::update()
 
     }
     //Player died
-    if (player.died) {
+    if (player.isDead) {
         player.setVelocity(Vector2f(0, player.getVelocity().y));
-        //player.setColor(Color::White);
+        player.setColor(Color::White);
     }
 
     player.updatePosition(player.getPosition() + player.getVelocity()*deltaTime.asSeconds());
