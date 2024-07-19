@@ -85,9 +85,7 @@ void Enemy::trueUpdate(float deltaTime, vector<Platform> platforms, vector<Proje
 
 	if (velocity.x != 0) {
 		self.setTexture(*getNextTexture("move"),true);
-		cout << self.getScale().x << endl;
 		updateSize(size);
-		//self.setScale(0.1, 0.1);
 	}
 
 	readyToUpdate = true;
